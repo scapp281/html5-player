@@ -2,14 +2,16 @@ window.addEventListener('load', function() {
 
 	video = document.getElementById('video');
 
+	pbarContainer = document.getElementById('pbar-container');
+	pbar = document.getElementById('pbar');
+
 	playButton = document.getElementById('play-button');
-    
-    pbar = document.getElementById('pbar');
 
 	video.load();
 	video.addEventListener('canplay', function() {
 
 		playButton.addEventListener('click', playOrPause, false);
+		pbarContainer.addEventListener('click', skip, false);
 
 	}, false);
 
@@ -18,21 +20,29 @@ window.addEventListener('load', function() {
 function playOrPause() {
 	if (video.paused) {
 		video.play();
-        update = setInterval(updatePlayer,30);
 		playButton.src = 'images/pause.png';
+		update = setInterval(updatePlayer, 30);
 	} else {
 		video.pause();
-        window.clearInterval(update);
 		playButton.src = 'images/play.png';
-        
+		window.clearInterval(update);
 	}
 }
 
-function updatePlayer(){
-    var percentage = (video.currentTime/video.duration)*100;
-    pbar.style.width = percentage + '%';
-    if(video.ended){
-        window.clearInterval(update);
-        playButton.src = 'images/replay.png'
-    }
+function updatePlayer() {
+	var percentage = (video.currentTime/video.duration)*100;
+	pbar.style.width = percentage + '%';
+	if (video.ended) {
+		window.clearInterval(update);
+		playButton.src = 'images/replay.png';
+	}
+}
+
+function skip(ev) {
+	var mouseX = ev.pageX - pbarContainer.offsetLeft;
+	var width = window.getComputedStyle(pbarContainer).getPropertyValue('width');
+	width = parseFloat(width.substr(0, width.length - 2));
+
+	video.currentTime = (mouseX/width)*video.duration;
+	updatePlayer();
 }
