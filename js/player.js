@@ -11,6 +11,8 @@ window.addEventListener('load', function () {
     playButton = document.getElementById('play-button');
     timeField = document.getElementById('time-field');
     soundButton = document.getElementById('sound-button');
+    sbarContainer = document.getElementById('sbar-container');
+    sbar = document.getElementById('sbar');
 
     video.load();
     video.addEventListener('canplay', function () {
@@ -20,8 +22,7 @@ window.addEventListener('load', function () {
         updatePlayer();
 
         soundButton.addEventListener('click', muteOrUnmute, false);
-        sbarContainer = document.getElementById('sbar-container');
-        sbar = document.getElementById('sbar');
+        sbarContainer.addEventListener('click', changeVolume, false);
     }, false);
 
 }, false);
@@ -81,4 +82,16 @@ function muteOrUnmute() {
         soundButton.src = 'images/sound.png';
         sbar.style.display = 'block';
     }
+}
+
+function changeVolume(ev) {
+	var mouseX = ev.pageX - sbarContainer.offsetLeft;
+	var width = window.getComputedStyle(sbarContainer).getPropertyValue('width');
+	width = parseFloat(width.substr(0, width.length - 2));
+
+	video.volume = (mouseX/width);
+	sbar.style.width = (mouseX/width)*100 + '%';
+	video.muted = false;
+	soundButton.src = 'images/sound.png';
+	sbar.style.display = 'block';
 }
